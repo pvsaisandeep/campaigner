@@ -1,0 +1,2 @@
+class InflunecerSocialAccount < ApplicationRecord
+end

@@ -1,0 +1,2 @@
+class CampaignBrief < ApplicationRecord
+end

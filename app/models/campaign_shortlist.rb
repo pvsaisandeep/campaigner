@@ -1,0 +1,2 @@
+class CampaignShortlist < ApplicationRecord
+end
