@@ -3,7 +3,7 @@ class InfluencerController < ApplicationController
 
 	#Influencer Creation
 	def new_influencer
-		values = influencer_params
+		values = influence_params
 		@influencer = Influencer.new(values)
 		if @influencer.save
 			data = @influencer
@@ -19,14 +19,21 @@ class InfluencerController < ApplicationController
 
 	def update_influencer
 		values = update_params
-		@influencer = Influencer.find(values[:id])
-		values.delete :id
-		if @influencer.update_attributes(values)
-			data = @influencer
-			message = "Influencer updated successfully"
-			status = "success"
+		@influencer = Influencer.find_by(id: values[:id])
+		byebug
+		if @influencer
+			values.delete :id
+			if @influencer.update_attributes(values)
+				data = @influencer
+				message = "Influencer updated successfully"
+				status = "success"
+			else
+				message = Influencer.errors.full_messages
+				status = "fail"
+			end
 		else
-			message = Influencer.errors.full_messages
+			data = {}
+			message = "No Influencer found with given id"
 			status = "fail"
 		end
 		result = {"influencer": data, "message": message, "status": status }
@@ -34,13 +41,18 @@ class InfluencerController < ApplicationController
 	end
 
 	def delete_influencer
-		@influencer = Influencer.find(params[:id])
-		if @influencer.destroy
-			message = "Influencer deleted successfully"
-			is_deleted = true
+		@influencer = Influencer.find_by(id: params[:id])
+		if @influencer
+			if @influencer.destroy
+				message = "Influencer deleted successfully"
+				is_deleted = true
+			else
+				message = Influencer.errors.full_messages
+				is_deleted = false
+			end
 		else
-			message = Influencer.errors.full_messages
-			is_deleted = false
+			message = "No Influencer found with given id"
+			is_deleted = "false"
 		end
 		render json: {"message": message, "is_deleted": is_deleted}
 	end
@@ -51,6 +63,26 @@ class InfluencerController < ApplicationController
 	end
 
 	#Influencer Application to Campaign
+	def influence_apply
+		@influencer = Influencer.find_by(id: params[:influencer_id])
+		if @influencer
+			@campaign = Campaign.find_by(id: params[:campaign_id])
+			if @campaign
+				@application = @influencer.campaign_applications.new(campaign_id: @campaign.id)
+				if @application.save
+					message = "Application to Campaign succesfully created"
+					data = @application
+				else
+					message = CampaignApplication.errors.full_messages
+				end
+			else
+				message = "No Campaign exits with given id"
+			end
+		else
+			message = "No influencer exists with given id"
+		end
+		render json: {"Application details":@application, "message":message}
+	end
 
 
 	def influence_params
