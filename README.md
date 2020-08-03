@@ -25,7 +25,7 @@ Things you may want to cover:
 
 
 *PENDING TASKS*
-	- Create Campaign shortlists & respective briefs
+    - Create Campaign shortlists & respective briefs
     - Authentication
     - Mails
     - Running campaigns on dates
